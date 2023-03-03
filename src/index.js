@@ -10,7 +10,7 @@ import Store from './Store/store';
 import { Toaster } from 'react-hot-toast'
 import CustomerReport from "./Pages/CustomerReport";
 import LiveTxn from "./Pages/LiveVcipTxn";
-import Gleap from "gleap";
+// import Gleap from "gleap";
 import axios from "axios";
 
 
@@ -41,7 +41,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 // const accountValue = sessionStorage.getItem("account");
 // axios.defaults.baseURL = accountValue ? process.env.REACT_APP_BE_URL : "test";
 
-Gleap.initialize('xjCBpKMrVMXqwq8Nj8zF6sEOmTHXjSKx')
+// Gleap.initialize('xjCBpKMrVMXqwq8Nj8zF6sEOmTHXjSKx')
 
 root.render(
   <Provider store={Store}>

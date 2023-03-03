@@ -90,77 +90,30 @@ const Login = () => {
   }
 
   const movetodashboardpage = (e) => {
-    console.log("hola");
+    console.log("login clicked");
     // setLoad(true);
     e.preventDefault();
     setLoad(true);
-
-    // const encodePwd = base64.encode(loginObj?.password);
     const model = {
       email: loginObj.email,
       password: loginObj?.password,
     };
-    console.log(model,"----login====================");
-    getUserInfo(model);
-      // dispatch(loginrequest({model,callback: loginRespData}));
+      dispatch(loginrequest({model,callback: loginRespData}));
   };
-
-  const loginUser = (data) => {
-    axios
-      .post("https://d33rdsqeflhtup.cloudfront.net/login",data)
-      .then((response) => response
-      )
-      .then((users) => {
-        this.setState({ users, isLoading: false });
-      })
-      .catch((error) => this.setState({ error, isLoading: false }));
-  };
-
-  const getUserInfo = () =>{
-      axios
-        .get("https://d33rdsqeflhtup.cloudfront.net/profile")
-        .then((response) =>
-          response.data.results.map((user) => ({
-            name: `${user.name.first} ${user.name.last}`,
-            username: `${user.login.username}`,
-            email: `${user.email}`,
-            image: `${user.picture.thumbnail}`,
-          }))
-        )
-        .then((users) => {
-          this.setState({ users, isLoading: false });
-        })
-        .catch((error) => this.setState({ error, isLoading: false }));
-  }
 
   const loginRespData = (data,error) => {
     console.log("login resspp", data);
     sessionStorage.setItem("authkey", JSON.stringify(data));
     if(error){
-      console.log("rrrrrrrrrrr",data);
       toast.error(data.message);
       setLoad(false);
       return;
     }
-    // sessionStorage.setItem("authkey", data?.authkey);
-
-    // if (data?.authkey) {
-    //   setcontinueButtonDisable(true);
-
-    //   toast.success("Login Success");
-      // setLoad(false);
-      // navigate("/dashboard");
-    // } else 
-    // if (data?.respcode == "468") {
-      // viewDemoShow();
-    // } else {
-    //   setLoad(false);
-    //   toast.error("Invalid Username or Password");
-    // }
     setLoad(false);
   };
 
   const moveToLoginPage = (e) =>{
+    console.log("reginster hit");
     e.preventDefault();
     if(register.password !== register.confirmPassword ){
       showError("Password doesn't match")
@@ -174,21 +127,33 @@ const Login = () => {
       name:register.name,
       address:register.address,
     }
-    console.log("reginster ", registerModel);
+    // console.log("reginster ", registerModel);
     dispatch(registerUserAction({model: registerModel, callback: registerRespData}))
 
   }
-
+  
   const registerRespData = (data,error) =>{
     if(error){
       setLoad(false);
       toast.error(data.message);
       return;
     }
-    console.log(data,"=====================reg ressss");
+    // console.log(data,"=====================reg ressss");
     setLoad(false);
-
   }
+
+    // const getUserInfo = () =>{
+  //     axios
+  //       .get("https://d33rdsqeflhtup.cloudfront.net/profile")
+  //       .then((response) => {
+  //         console.log("user profile info log", response);
+  //         return response}
+  //       )
+  //       .then((users) => {
+  //         // this.setState({ users, isLoading: false });
+  //       })
+  //       .catch((error) => this.setState({ error, isLoading: false }));
+  // }
 
 
   const isRegisterDisabled = () =>{
@@ -213,35 +178,6 @@ const Login = () => {
   };
   return (
     <>
-      {/* <Modal show={smShow}>
-        <Modal.Header>
-          <Modal.Title>Already Logged in another Session/Browser.</Modal.Title>
-          <Button
-            variant=""
-            className="btn btn-close"
-            onClick={() => {
-              viewDemoClose("Basic");
-            }}
-          >
-            <i className="si si-close"></i>
-          </Button>
-        </Modal.Header>
-        <Modal.Body className="d-flex">
-          <p>Are you sure you want to continue?</p>
-        </Modal.Body>
-        <Modal.Footer>
-
-          <Button
-            style={{ backgroundColor: "#ff6a61" }}
-            onClick={(event) => {
-              setcontinueButtonDisable(true);
-            }}
-            disabled={continueButtonDisable}
-          >
-            Continue
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
 
       <div
         className="page"
