@@ -1,0 +1,29 @@
+#if we want to run this pipeline, we need to trigger it in "CICD > Pipleines> Run Pipeline> select branch > Run"
+#workflow:
+#        rules:
+# # #          - if: '$CI_PIPELINE_SOURCE == "web"'
+#  #            when: always
+##            - when: never
+
+stages:
+    - deploy
+
+deploy_to_dev:
+    #image: napp/docker-aws-cli
+    image: senseyeio/node-aws-cli
+    stage: deploy
+    script:
+        #- zip vkyc-customer.zip -r .
+        #- apt-get install -y nodejs
+        - npm i -f
+        #- npm audit fix --force
+        - CI=false npm run build
+        #- npm run build
+        - pwd
+        - ls -la
+        - cd build/
+        - ls -la 
+        #- cd ./out
+        - aws s3 cp . s3://$AWS_BUCKET_DEV/ --recursive
+    only:
+        - DEV
