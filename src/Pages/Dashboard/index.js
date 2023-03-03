@@ -1,6 +1,9 @@
 // import { navigate } from "@reach/router";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+// import Loader from "./shade/Loaders/Loaders"
+import Loader from "../../shade/Loaders/Loaders"
+
 import { useDispatch } from "react-redux";
 import {
   loginrequest,
@@ -19,7 +22,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userData, setUserData] = useState({});
-  // const [load, setLoad] = useState(false);
+  const [load, setLoad] = useState(false);
 
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("token");
@@ -32,7 +35,7 @@ const Dashboard = () => {
     if(error){
       // console.log("+++++++++++++++++++++++++++",data);
       toast.error(data?.data?.message);
-      // setLoad(false);
+      setLoad(false);
       return;
     }
     // console.log(data?.data?.data ,"yy!");
@@ -46,10 +49,11 @@ const Dashboard = () => {
       setUserData(data?.data?.data);
       dispatch(getUserProfile(data?.data?.data));
     }
-    // setLoad(false);
+    setLoad(false);
   };
 
   useEffect(() => {
+    setLoad(true);
     dispatch(getUserProfileAction({ callback: useProfileResponseData }));
   }, []);
 
@@ -57,6 +61,7 @@ const Dashboard = () => {
 
   return (
     <>
+    { load &&<Loader />}
       <div className="wrap" style={{ marginLeft: "-16px ", color:"black", fontWeight:"600" }}>
         <div className="example" style={{ border: "none" }}>
           <h4 className="text-primary text-center mt-3">
