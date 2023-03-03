@@ -135,7 +135,7 @@ export default function Header() {
         <div className="main-header-left ">
           <div className="responsive-logo">
             <Link to={`/dashboard/`} className="header-logo">
-              <img
+              {/* <img
                 src="/Images/synizenLogo.svg"
                 // src="./assets/Images/admin-logo.png"
                 height={45}
@@ -149,7 +149,8 @@ export default function Header() {
                 className="mobile-logo dark-logo-1 "
                 alt="logo"
                 style={{ width: "20%", }}
-              />
+              /> */}
+              ChangeLogo
             </Link>
           </div>
           <div

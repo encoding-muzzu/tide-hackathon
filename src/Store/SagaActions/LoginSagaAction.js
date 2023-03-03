@@ -22,3 +22,10 @@ export const registerUserAction = (payload) => {
     payload,
   };
 };
+
+export const transactionsAction = (payload) => {
+  return {
+    type: SagaActionTypes.TRANSACTIONS,
+    payload,
+  };
+};

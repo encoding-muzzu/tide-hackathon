@@ -56,6 +56,21 @@ function* getloginSaga(action) {
   }
 }
 
+function* getTransactionsSaga(action) {
+  try {
+    const resp = yield call(getAPI, "/transactions");
+    if(resp?.status !== 200){
+      action?.payload?.callback(resp?.data,true);
+      return
+    }
+    if (resp && resp?.status === 200) {
+      action?.payload?.callback(resp?.data);
+    }
+  } catch (err) {
+    action?.payload?.callback({ data: err });
+  }
+}
+
 function* registerUser(action) {
 
   try {
@@ -90,4 +105,5 @@ export default function* LoginWatcherSaga() {
   yield takeEvery(SagaActionTypes.LOGINREQUEST, getloginSaga);
   yield takeEvery(SagaActionTypes.USERPROFILEREQ, getprofileSaga);
   yield takeEvery(SagaActionTypes.REGISTER_USER, registerUser)
+  yield takeEvery(SagaActionTypes.TRANSACTIONS, getTransactionsSaga)
 }

@@ -9,3 +9,4 @@ export const WEBHOOKDETAILSREQUEST = "GetVcipWebhookDetailsActionreqpayload";
 export const HEADINGOFNAVBARREQ = "HeadingOfNavbarREQ";
 export const USERPROFILEREQ = "UserProfileActionREQ";
 export const REGISTER_USER = "REGISTER_USER"; 
+export const TRANSACTIONS = "TRANSACTIONS"; 
