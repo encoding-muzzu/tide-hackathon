@@ -33,6 +33,9 @@ const AuthSignup = React.lazy(() => import("./Authentication/Signup"));
 
 
 const Dashboard = React.lazy(() => import("./Pages/Dashboard/"));
+const SendAmount = React.lazy(() => import("./Pages/SendAmount/"));
+
+
 
 
 const Login = React.lazy(() => import("./Pages/Login/"));
@@ -65,10 +68,10 @@ root.render(
                 element={<Dashboard />}
               />
               <Route
-                path={`/customerreport`}
-                element={<CustomerReport />}
+                path={`/send-amount`}
+                element={<SendAmount />}
               />
-              <Route
+              {/* <Route
                 path={`/livevcipidtxn`}
                 element={<LiveTxn />}
               />
@@ -80,7 +83,7 @@ root.render(
               <Route
                 path={`/pages/Authentication/500error`}
                 element={<Error500 />}
-              />
+              /> */}
               <Route path="*" element={<Error404 />} />
             </Route>
 
