@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import {
   loginrequest,
   registerUserAction,
+  getUserProfileAction,
   loginSagaAction,
   UserProfilereq,
 } from "../../Store/SagaActions/LoginSagaAction";
@@ -295,7 +296,7 @@ const Login = () => {
                                     </p> */}
                                     <p onClick={()=>handleRegisterHereClick(true)}  role="button" >
                                       {/* <Link to="#" className="mb-3"> */}
-                                        Register Here
+                                        Do not have account?. <span style={{color: "#ff9f99"}}>Register Here</span>
                                       {/* </Link> */}
                                     </p>
                                     

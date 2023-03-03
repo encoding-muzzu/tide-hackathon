@@ -1,56 +1,110 @@
 // import { navigate } from "@reach/router";
-import React, {useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-
+import { useDispatch } from "react-redux";
 import {
-  Col,
-  Row,
-} from "react-bootstrap";
-import Table from 'react-bootstrap/Table';
+  loginrequest,
+  registerUserAction,
+  getUserProfileAction,
+  getUserProfile,
+  loginSagaAction,
+  UserProfilereq,
+} from "../../Store/SagaActions/LoginSagaAction";
+import toast from "react-hot-toast";
+
+import QRCode from "qrcode.react";
+import { Col, Row } from "react-bootstrap";
+import Table from "react-bootstrap/Table";
 const Dashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [userData, setUserData] = useState({});
+  // const [load, setLoad] = useState(false);
 
-
-  useEffect(()=>{
+  useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("token");
-    if(!isLoggedIn){
+    if (!isLoggedIn) {
       navigate("/");
     }
-  },[])
+  }, []);
+
+  const useProfileResponseData = (data) => {
+    console.log(data?.data?.data ,"yy!");
+    if(data?.data?.status !== 200){
+      toast.error(data?.data?.message);
+      sessionStorage.clear();
+      navigate("/");
+    }else if(data?.data?.status === 200){
+      console.log("++++++++++++",data.data);
+      setUserData(data?.data?.data);
+      dispatch(getUserProfile(data?.data?.data));
+    }
+    // setLoad(false);
+  };
+
+  useEffect(() => {
+    dispatch(getUserProfileAction({ callback: useProfileResponseData }));
+  }, []);
+
+  console.log("**",userData);
 
   return (
     <>
-      <div className="wrap" style={{ marginLeft: "-16px " }}>
+      <div className="wrap" style={{ marginLeft: "-16px ", color:"black", fontWeight:"600" }}>
         <div className="example" style={{ border: "none" }}>
-          <h3 className="text-primary mb-3">Welcome To Tide Bank Dashboard</h3>
+          <h3 className="text-primary mb-3 text-center mt-3 mb-5">Tide Bank Dashboard</h3>
+          <div className="w-75 mx-auto">
+
+         
           <Row className="gap-3">
-            <Col className="border p-4">
+            <Col className="border border-primary rounded p-4">
               <h5>User Details</h5>
               <Table borderless hover>
-              <tbody>
-                <tr>
-                  <td>Name</td>
-                  <td>Wasim Akram</td>
-                </tr>
-                <tr>
-                  <td>Address</td>
-                  <td>address asdf asdf asdf asdf </td>
-                </tr>
-                <tr>
-                  <td>Email</td>
-                  <td colSpan={2}>wasimakram@gmail..com</td>
-                </tr>
-              </tbody>
-            </Table>
+                <tbody>
+                  <tr>
+                    <td>Name</td>
+                    <td>{userData?.name || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Email</td>
+                    <td colSpan={1}>{userData?.email || "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Address</td>
+                    <td>{userData?.address || "-"} </td>
+                  </tr>
+                  <tr>
+                    <td>Currency Name</td>
+                    <td>{userData?.cur_name || "-"} </td>
+                  </tr>
+                  <tr>
+                    <td>Currency Symbol</td>
+                    <td>{userData?.cur_symbol || "-"} </td>
+                  </tr>
+                </tbody>
+              </Table>
             </Col>
-            <Col className="border p-4">
-            <h5>Wallet/Account Address</h5></Col>
-          </Row >
-          <Row className="gap-3 my-3">
-            <Col className="border rounded p-4"><h5>QR Code </h5></Col>
-            <Col className="border rounded p-4"><h5>Wallet Balance</h5> </Col>
+            <Col className="border border-primary rounded p-4">
+              <h5>Wallet/Account Address</h5>
+              {userData?.wallet && (
+                <div className="text-center">
+                  <QRCode value={userData?.wallet} className="my-2"/>
+                  <p className="my-2">{userData?.wallet} <span className="text-primary cursor-pointer" onClick={()=>navigator.clipboard.writeText(userData?.wallet)}><i className="fa fa-copy ms-1"></i></span></p>
+                  <p className="text-success d-flex justify-content-center align-items-center fs-6">Account Balance: <span className="fs-5 ps-1">{userData?.balance || 0}</span></p>
+
+                </div>
+              )}
+            </Col>
           </Row>
+          <Row className="gap-3 my-3">
+            <Col className="border border-primary  rounded p-4">
+              <h5>QR Code </h5>
+            </Col>
+            <Col className="border border-primary rounded p-4">
+              <h5>Wallet Balance</h5>{" "}
+            </Col>
+          </Row>
+        </div>
         </div>
       </div>
     </>

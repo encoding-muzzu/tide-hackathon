@@ -22,3 +22,17 @@ export const registerUserAction = (payload) => {
     payload,
   };
 };
+
+export const getUserProfileAction = (payload) =>{
+  return {
+    type: SagaActionTypes.GET_USER_PROFILE,
+    payload
+  }
+}
+
+export const getUserProfile = (payload) =>{
+  return {
+    type: SagaActionTypes.GET_USER_PROFILE_DATA,
+    payload
+  }
+}
