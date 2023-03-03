@@ -52,7 +52,10 @@ const Dashboard = () => {
     <>
       <div className="wrap" style={{ marginLeft: "-16px ", color:"black", fontWeight:"600" }}>
         <div className="example" style={{ border: "none" }}>
-          <h3 className="text-primary mb-3 text-center mt-3 mb-5">Tide Bank Dashboard</h3>
+          <h4 className="text-primary text-center mt-3">
+            Hi, {userData?.name.toUpperCase() || ""} 
+          </h4>
+          <h3 className="text-primary mb-3 text-center mt-3 mb-5">Welcome to Tide Bank</h3>
           <div className="w-75 mx-auto">
 
          
@@ -81,6 +84,10 @@ const Dashboard = () => {
                     <td>Currency Symbol</td>
                     <td>{userData?.cur_symbol || "-"} </td>
                   </tr>
+                  <tr>
+                    <td> KYC </td>
+                    <td className={userData?.is_kyc === false ? "text-primary":"text-success"}>{userData?.is_kyc ? "Verified":"Not Verified" } </td>
+                  </tr>
                 </tbody>
               </Table>
             </Col>
@@ -96,14 +103,14 @@ const Dashboard = () => {
               )}
             </Col>
           </Row>
-          <Row className="gap-3 my-3">
+          {/* <Row className="gap-3 my-3">
             <Col className="border border-primary  rounded p-4">
               <h5>QR Code </h5>
             </Col>
             <Col className="border border-primary rounded p-4">
               <h5>Wallet Balance</h5>{" "}
             </Col>
-          </Row>
+          </Row> */}
         </div>
         </div>
       </div>
