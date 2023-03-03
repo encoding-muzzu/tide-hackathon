@@ -28,14 +28,21 @@ const Dashboard = () => {
     }
   }, []);
 
-  const useProfileResponseData = (data) => {
-    console.log(data?.data?.data ,"yy!");
+  const useProfileResponseData = (data,error) => {
+    if(error){
+      // console.log("+++++++++++++++++++++++++++",data);
+      toast.error(data?.data?.message);
+      // setLoad(false);
+      return;
+    }
+    // console.log(data?.data?.data ,"yy!");
     if(data?.data?.status !== 200){
+      // console.log("+++++++++++++");
       toast.error(data?.data?.message);
       sessionStorage.clear();
       navigate("/");
     }else if(data?.data?.status === 200){
-      console.log("++++++++++++",data.data);
+      // console.log("++++++++++++",data.data);
       setUserData(data?.data?.data);
       dispatch(getUserProfile(data?.data?.data));
     }
