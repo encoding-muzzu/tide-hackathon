@@ -16,7 +16,6 @@ import { actionGetDepartmentDetails } from "../../Store/SagaActions/TableSagaAct
 import base64 from "base-64";
 import toast from "react-hot-toast";
 import Select from "react-select";
-// import { positions } from "@mui/system";
 // import { oneDaySagaAction } from "../../Store/SagaActions/DataSagaActions";
 
 const Login = () => {
