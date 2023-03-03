@@ -5,14 +5,15 @@ import { toast } from "react-toastify";
 import axios from "axios";
 
 import { getAPI, postAPI } from "./ApiMethods";
+import { saveLoginResp } from "../SagaActions/LoginSagaAction";
 
 // "http://10.10.1.117:3000" || https://d33rdsqeflhtup.cloudfront.net || http://ec2-15-206-146-70.ap-south-1.compute.amazonaws.com || http://10.10.1.117/
 
 // const baseURL = "http://ec2-15-206-146-70.ap-south-1.compute.amazonaws.com"
 const baseURL = "http://192.168.251.182"
 
+let token = sessionStorage.getItem("token");
 const getMethod = (url) => {
-  const token = sessionStorage.getItem("token");
   if (!token) {
     // toast.error("lol")
     // window.location.replace("/");
@@ -40,11 +41,14 @@ const getMethod = (url) => {
     });
 }
 
-const postMethod = (url, body) => {
+const postMethod = (url, body, headers) => {
 
   console.log("hitting post in saga", `${baseURL}${url}`, body);
   return axios.post(`${baseURL}${url}`, body, {
-    'Content-Type': "application/json"
+    'Content-Type': "application/json",
+    headers: {
+      "Authorization": `Basic ${headers}`
+    }
   })
     .then((response) => {
       if (response.status === 200) {
@@ -58,6 +62,7 @@ const postMethod = (url, body) => {
 function* getloginSaga(action) {
   try {
     const resp = yield call(postMethod, "/login", action.payload.model);
+    yield put(saveLoginResp(resp?.data?.data));
     // console.log("logggggggggggggggggggggggggg***************",resp);
     if (resp?.status !== 200) {
       action?.payload?.callback(resp, true);
@@ -75,7 +80,7 @@ function* getloginSaga(action) {
 
 function* getTransactionsSaga(action) {
   try {
-    const resp = yield call(getAPI, "/transactions");
+    const resp = yield call(getMethod, "/transactions");
     if (resp?.status !== 200) {
       action?.payload?.callback(resp?.data, true);
       return
@@ -125,6 +130,23 @@ function* getUserProfile(action) {
     action?.payload?.callback({ data: err });
   }
 }
+function* transferSaga(action) {
+  console.log(token, 'asd')
+  try {
+    const resp = yield call(postMethod, "/transfer", action.payload.model, token);
+    if (resp?.status !== 200) {
+      action?.payload?.callback(resp, true);
+      return
+    }
+    if (resp && resp?.status === 200 && resp?.data?.status === 200) {
+      action?.payload?.callback(resp);
+    } else {
+      action?.payload?.callback(resp, true);
+    }
+  } catch (err) {
+    action?.payload?.callback({ data: err });
+  }
+}
 
 function* getprofileSaga(action) {
   try {
@@ -144,4 +166,5 @@ export default function* LoginWatcherSaga() {
   yield takeEvery(SagaActionTypes.TRANSACTIONS, getTransactionsSaga)
   yield takeEvery(SagaActionTypes.REGISTER_USER, registerUser);
   yield takeEvery(SagaActionTypes.GET_USER_PROFILE, getUserProfile);
+  yield takeEvery(SagaActionTypes.POST_TRANSFER, transferSaga);
 }

@@ -3,21 +3,26 @@ import { Button, Form } from 'react-bootstrap';
 
 const InputFields = (props) => {
 
-    let { isDisabled, fromAddress, handleSubmit, errors, handleInputChange, getSendAmount, btnName, handleFormSubmit, handleDropDownChange } = props;
+    let { fromAddress, handleSubmit, errors, handleInputChange, getSendAmount, btnName, handleFormSubmit, handleDropDownChange } = props;
     return (
         <>
             <Form onSubmit={handleSubmit}>
+                <Form.Group className="form-group border border-primary rounded">
+                    <div className='p-3'>
+                        <Form.Label>Available Balance</Form.Label>{" "}
+                        <h3>{1000 - getSendAmount?.amount}<span>&#8377;</span></h3>
+                        <p>This is your current available balance.</p>
+                    </div>
+                </Form.Group>
+
                 <Form.Group className="form-group">
                     <Form.Label className="">From Address</Form.Label>{" "}
                     <Form.Control
                         className="form-control"
-                        // placeholder="Enter your email"
                         id="fromAddress"
                         type="text"
                         value={fromAddress}
                         disabled={true}
-                    // onChange={handleUserChange}
-                    // required
                     />
                 </Form.Group>
                 <Form.Group className="form-group">
@@ -32,12 +37,17 @@ const InputFields = (props) => {
                         required
                     />
                 </Form.Group>
-                <Form.Group className="form-group border border-primary rounded">
-                    <div className='p-3'>
-                        <Form.Label>Amount</Form.Label>{" "}
-                        <h3>300<span>&#8377;</span></h3>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati, beatae.</p>
-                    </div>
+                <Form.Group className="form-group">
+                    <Form.Label>Enter Amount</Form.Label>{" "}
+                    <Form.Control
+                        className="form-control"
+                        placeholder="Enter the Amount"
+                        id="amount"
+                        type="number"
+                        value={getSendAmount?.amount}
+                        onChange={handleInputChange}
+                        required
+                    />
                 </Form.Group>
 
 
