@@ -8,7 +8,7 @@ export default function Footer() {
       <Col md={12} sm={12} className=" text-center">
         <div className="container-fluid pt-0 ht-100p">
           Copyright © 2023{" "}
-          <Link to="https://syntizen.com/" className="text-primary">
+          <Link to="/" className="text-primary">
             Tide-a-thon
           </Link>
           {/* . Designed with <span className="fa fa-heart text-danger"></span> by
