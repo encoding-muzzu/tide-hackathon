@@ -6,46 +6,58 @@ import {
 } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Popup from '../../services/popup';
 import InputFields from './InputFields';
-import { transactionsAction, transferAction } from '../../Store/SagaActions/LoginSagaAction';
+import { getUserProfile, getUserProfileAction, transactionsAction, transferAction } from '../../Store/SagaActions/LoginSagaAction';
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
+import Loader from "../../shade/Loaders/Loaders";
 
 const SendAmount = () => {
   const dispatch = useDispatch();
   const [togglePopup, setTogglePopup] = useState(false);
   const [getSendAmount, setSendAmount] = useState({});
   const [transHistoryList, setTransHistoryList] = useState([])
+  const [load, setLoad] = useState(false);
+  const { userData } = useSelector((store) => store.HomeReducer)
 
-
+  const navigate = useNavigate();
   useEffect(() => {
-    dispatch(transactionsAction({ callback: respData }))
+    setLoad(true);
+    transactions();
+    dispatch(getUserProfileAction({ callback: useProfileResponseData }));
   }, [dispatch])
 
+  const useProfileResponseData = (data, error) => {
+    if (error) {
+      // console.log("+++++++++++++++++++++++++++",data);
+      toast.error(data?.data?.message);
+      setLoad(false);
+      return;
+    }
+    // console.log(data?.data?.data ,"yy!");
+    if (data?.data?.status !== 200) {
+      // console.log("+++++++++++++");
+      toast.error(data?.data?.message);
+      sessionStorage.clear();
+      navigate("/");
+    } else if (data?.data?.status === 200) {
+      // console.log("++++++++++++",data.data);
+      dispatch(getUserProfile(data?.data?.data));
+    }
+    setLoad(false);
+  };
+
+
+
+  const transactions = () => {
+    dispatch(transactionsAction({ callback: respData }))
+  };
+
   const respData = (data) => {
-    // console.log('data', data)
-    //       "from_addr": "0x14BaEb5a68d75220fE5773B05B64982f7A24e0e3",
-    // {
-    //   "data": [
-    //     {
-    //       "created_at": "Sat, 04 Mar 2023 00:01:39 GMT",
-    //       "from_email": "afaaq@gmail.com",
-    //       "to_addr": "0x2b7d884C1ABe5B4C8a30AD4dB4e9d17645F77C12",
-    //       "amount": "1",
-    //       "description": "adfs",
-    //       "txnhash": "0xfe0f1772787f86f2f8f6cf2359477c0a48e41502539c90c8c910d619581f3312",
-    //       "status": "success",
-    //       "type": "Debit"
-    //     }
-    //   ],
-    //   "message": "success",
-    //   "status": 200
-    // }
-
-
-
+    setLoad(false);
     setTransHistoryList(data?.data)
 
   };
@@ -89,17 +101,6 @@ const SendAmount = () => {
       sortable: true,
       wrap: true,
     },
-    // {
-    //   name: "Actions",
-    //   selector: (row) => (
-    //     <div className="flex-child">
-    //       {/* <FontAwesomeIcon icon="fa-solid fa-trash" />
-    //             <FontAwesomeIcon icon="fa-duotone fa-pen-to-square" /> */}
-
-    //       {/* <FontAwesomeIcon icon={faPenToSquare} onClick={(e) => {}} /> */}
-    //     </div>
-    //   )
-    // }
   ];
 
   const handlePopupClose = () => {
@@ -124,18 +125,14 @@ const SendAmount = () => {
       description: "adfs"
     }
     dispatch(transferAction({ model, callback: respTransferData }))
+    setLoad(true);
 
 
   };
   const respTransferData = (data) => {
-    //   {
-    //     "data": {
-    //         "txn_hash": "0xfe0f1772787f86f2f8f6cf2359477c0a48e41502539c90c8c910d619581f3312"
-    //     },
-    //     "message": "success",
-    //     "status": 200
-    // }
+    setLoad(false);
     if (data?.data?.status === 200) {
+      transactions();
       toast.success(data?.data?.message)
       handlePopupClose();
     } else {
@@ -146,6 +143,8 @@ const SendAmount = () => {
 
   return (
     <>
+      {load && <Loader />}
+
       <div className="wrap" style={{ marginLeft: "-16px" }}>
         <Row className="m-3">
           <Col className="d-flex justify-content-between">
@@ -168,12 +167,13 @@ const SendAmount = () => {
                   className="px860"
                   body={
                     <InputFields
-                      fromAddress={"wallet"}
                       handleInputChange={handleInputChange}
                       getSendAmount={getSendAmount}
                       handleSubmit={handleSubmit}
                       btnName={"Submit"}
                       transHistoryList={transHistoryList}
+                      userData={userData}
+                      load={load}
                     />
                   }
                 />

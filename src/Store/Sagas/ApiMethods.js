@@ -8,7 +8,7 @@ import Axios from "../../services/axios";
 // "http://192.168.1.6:5001" ||
 // const getBaseUrl = () => "http://localhost:5000"
 // const getBaseUrl = () => "http://ec2-15-206-146-70.ap-south-1.compute.amazonaws.com";
-const getBaseUrl = () => "http://192.168.1.6";
+const getBaseUrl = () => "http://192.168.251.182";
 const config = {
   headers: {
     Authorisation: "Bearer null"

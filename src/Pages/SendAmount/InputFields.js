@@ -1,16 +1,20 @@
 import React from 'react'
 import { Button, Form } from 'react-bootstrap';
+import Loader from '../../shade/Loaders/Loaders';
 
 const InputFields = (props) => {
 
-    let { fromAddress, handleSubmit, errors, handleInputChange, getSendAmount, btnName, handleFormSubmit, handleDropDownChange } = props;
+    let { load, userData, handleSubmit, handleInputChange, getSendAmount } = props;
+
     return (
         <>
+            {load && <Loader />}
+
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="form-group border border-primary rounded">
                     <div className='p-3'>
                         <Form.Label>Available Balance</Form.Label>{" "}
-                        <h3>{1000 - getSendAmount?.amount}<span>&#8377;</span></h3>
+                        <h3>{userData?.balance - (getSendAmount?.amount || 0)}<span>&#8377;</span></h3>
                         <p>This is your current available balance.</p>
                     </div>
                 </Form.Group>
@@ -21,7 +25,7 @@ const InputFields = (props) => {
                         className="form-control"
                         id="fromAddress"
                         type="text"
-                        value={fromAddress}
+                        value={userData?.email}
                         disabled={true}
                     />
                 </Form.Group>
@@ -46,6 +50,7 @@ const InputFields = (props) => {
                         type="number"
                         value={getSendAmount?.amount}
                         onChange={handleInputChange}
+                        max={userData?.amount}
                         required
                     />
                 </Form.Group>
