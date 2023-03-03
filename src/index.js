@@ -8,11 +8,6 @@ import Loader from "./shade/Loaders/Loaders"
 import { Provider } from "react-redux";
 import Store from './Store/store';
 import { Toaster } from 'react-hot-toast'
-import CustomerReport from "./Pages/CustomerReport";
-import LiveTxn from "./Pages/LiveVcipTxn";
-// import Gleap from "gleap";
-import axios from "axios";
-
 
 const App = React.lazy(() => import("../src/shade/layouts/App"));
 const Switcherapp = React.lazy(() => import("../src/shade/layouts/Switcherapp"));
@@ -26,25 +21,14 @@ const Error500 = React.lazy(() =>
 const Error501 = React.lazy(() =>
   import("./components/Pages/Authentication/501Error/501Error")
 );
-const AuthLogin = React.lazy(() => import("./Authentication/Login"));
-const AuthSignup = React.lazy(() => import("./Authentication/Signup"));
-//Form
 
 
 
 const Dashboard = React.lazy(() => import("./Pages/Dashboard/"));
 const SendAmount = React.lazy(() => import("./Pages/SendAmount/"));
 
-
-
-
 const Login = React.lazy(() => import("./Pages/Login/"));
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
-// const accountValue = sessionStorage.getItem("account");
-// axios.defaults.baseURL = accountValue ? process.env.REACT_APP_BE_URL : "test";
-
-// Gleap.initialize('xjCBpKMrVMXqwq8Nj8zF6sEOmTHXjSKx')
 
 root.render(
   <Provider store={Store}>
@@ -71,19 +55,6 @@ root.render(
                 path={`/send-amount`}
                 element={<SendAmount />}
               />
-              {/* <Route
-                path={`/livevcipidtxn`}
-                element={<LiveTxn />}
-              />
-
-              <Route
-                path={`/pages/Authentication/404error`}
-                element={<Error404 />}
-              />
-              <Route
-                path={`/pages/Authentication/500error`}
-                element={<Error500 />}
-              /> */}
               <Route path="*" element={<Error404 />} />
             </Route>
 
