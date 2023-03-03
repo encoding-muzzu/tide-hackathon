@@ -3,10 +3,12 @@ import { Button, Col, Form, Row, Alert, Card, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import MultiSelect from "react-multiple-select-dropdown-lite";
 import { CFormFeedback } from "@coreui/react";
+import axios from "axios";
 
 import { useDispatch } from "react-redux";
 import {
   loginrequest,
+  registerUserAction,
   loginSagaAction,
   UserProfilereq,
 } from "../../Store/SagaActions/LoginSagaAction";
@@ -25,10 +27,19 @@ const Login = () => {
   const dispatch = useDispatch();
   const [smShow, setSmShow] = useState(false);
   const userObj = {
-    username: "",
+    email: "",
     password: "",
   };
+  const registerObject = {
+    email:"",
+    password:"",
+    name:"",
+    address:"",
+    confirmPassword:""
+  }
   const [loginObj, setLoginObj] = useState(userObj);
+  const [register, setRegister] = useState(registerObject);
+  const [error, showError] = useState("");
 
   const [dpvalue, setDpvalue] = useState(false);
   const [validatedCustom, setValidatedCustom] = useState(false);
@@ -47,6 +58,7 @@ const Login = () => {
     value: "0",
     label: "UAT",
   });
+  const [registerHere, setRegisterHere] = useState(false);
 
   // const [issureoptionState, setissureoptionStateState] = useState({
   //   value: "0",
@@ -60,41 +72,132 @@ const Login = () => {
 
   const handleUserChange = (e) => {
     const { name, value } = e.target;
+    showError("");
     setLoginObj({ ...loginObj, [name]: value });
   };
 
+  const handleRegisterChange = (e) =>{
+    
+    const { name, value } = e.target;
+    showError("");
+    setRegister({...register, [name]: value});
+  }
+
+  const handleRegisterHereClick = (isRegister=false) =>{
+    setLoginObj({})
+    showError("");
+    setRegisterHere(isRegister);
+  }
+
   const movetodashboardpage = (e) => {
-    setLoad(true);
+    console.log("hola");
+    // setLoad(true);
     e.preventDefault();
     setLoad(true);
 
-    const encodePwd = base64.encode(loginObj?.password);
+    // const encodePwd = base64.encode(loginObj?.password);
     const model = {
-      username: loginObj.username,
-      password: encodePwd,
-      callback: loginRespData,
+      email: loginObj.email,
+      password: loginObj?.password,
     };
-    dispatch(loginrequest(model));
-    // dispatch(UserProfilereq());
+    console.log(model,"----login====================");
+    getUserInfo(model);
+      // dispatch(loginrequest({model,callback: loginRespData}));
   };
 
-  const loginRespData = (data) => {
+  const loginUser = (data) => {
+    axios
+      .post("https://d33rdsqeflhtup.cloudfront.net/login",data)
+      .then((response) => response
+      )
+      .then((users) => {
+        this.setState({ users, isLoading: false });
+      })
+      .catch((error) => this.setState({ error, isLoading: false }));
+  };
+
+  const getUserInfo = () =>{
+      axios
+        .get("https://d33rdsqeflhtup.cloudfront.net/profile")
+        .then((response) =>
+          response.data.results.map((user) => ({
+            name: `${user.name.first} ${user.name.last}`,
+            username: `${user.login.username}`,
+            email: `${user.email}`,
+            image: `${user.picture.thumbnail}`,
+          }))
+        )
+        .then((users) => {
+          this.setState({ users, isLoading: false });
+        })
+        .catch((error) => this.setState({ error, isLoading: false }));
+  }
+
+  const loginRespData = (data,error) => {
+    console.log("login resspp", data);
     sessionStorage.setItem("authkey", JSON.stringify(data));
+    if(error){
+      console.log("rrrrrrrrrrr",data);
+      toast.error(data.message);
+      setLoad(false);
+      return;
+    }
     // sessionStorage.setItem("authkey", data?.authkey);
 
-    if (data?.authkey) {
-      setcontinueButtonDisable(true);
+    // if (data?.authkey) {
+    //   setcontinueButtonDisable(true);
 
-      toast.success("Login Success");
-      setLoad(false);
-      navigate("/dashboard");
-    } else if (data?.respcode == "468") {
-      viewDemoShow();
-    } else {
-      setLoad(false);
-      toast.error("Invalid Username or Password");
-    }
+    //   toast.success("Login Success");
+      // setLoad(false);
+      // navigate("/dashboard");
+    // } else 
+    // if (data?.respcode == "468") {
+      // viewDemoShow();
+    // } else {
+    //   setLoad(false);
+    //   toast.error("Invalid Username or Password");
+    // }
+    setLoad(false);
   };
+
+  const moveToLoginPage = (e) =>{
+    e.preventDefault();
+    if(register.password !== register.confirmPassword ){
+      showError("Password doesn't match")
+      return;
+    }
+    setLoad(true);
+    e.preventDefault();
+    const registerModel = {
+      email: register.email,
+      password:register.password,
+      name:register.name,
+      address:register.address,
+    }
+    console.log("reginster ", registerModel);
+    dispatch(registerUserAction({model: registerModel, callback: registerRespData}))
+
+  }
+
+  const registerRespData = (data,error) =>{
+    if(error){
+      setLoad(false);
+      toast.error(data.message);
+      return;
+    }
+    console.log(data,"=====================reg ressss");
+    setLoad(false);
+
+  }
+
+
+  const isRegisterDisabled = () =>{
+    return !register.email ||
+    !register.password ||
+    !register.name ||
+    !register.address ||
+    !register.confirmPassword
+  }
 
   let viewDemoShow = () => {
     setSmShow(true);
@@ -110,7 +213,7 @@ const Login = () => {
   };
   return (
     <>
-      <Modal show={smShow}>
+      {/* <Modal show={smShow}>
         <Modal.Header>
           <Modal.Title>Already Logged in another Session/Browser.</Modal.Title>
           <Button
@@ -127,28 +230,18 @@ const Login = () => {
           <p>Are you sure you want to continue?</p>
         </Modal.Body>
         <Modal.Footer>
-          {/* <link href="#" onClick={(event) => { func1(event); func2();}}>Trigger here</link> */}
 
           <Button
             style={{ backgroundColor: "#ff6a61" }}
             onClick={(event) => {
-              movetodashboardpage(event);
               setcontinueButtonDisable(true);
             }}
             disabled={continueButtonDisable}
           >
             Continue
           </Button>
-          {/* <Button
-            variant="secondary"
-            onClick={() => {
-              viewDemoClose("Basic");
-            }}
-          >
-            Close
-          </Button> */}
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
 
       <div
         className="page"
@@ -188,18 +281,18 @@ const Login = () => {
                   {/* <!-- Demo content--> */}
                   <div className="main-card-signin d-md-flex ">
                     <div className="wd-100p">
-                      <img
+                      {/* <img
                         src="/Images/synizenLogo.svg"
                         className="main-logo  desktop-logo  mt-7"
                         height={290}
                         alt="logo"
                         style={{ width: "40%" }}
-                      />
-                      <div className="d-flex mb-4"></div>
+                      /> */}
+                      {/* <div className="d-flex mb-4"></div> */}
                       <div className="">
-                        <div className="main-signup-header">
-                          <h4 style={{ color: "#ff6a61" }}>
-                            Welcome To VCIP ID Dashboard
+                        {!registerHere ? <div className="main-signup-header ">
+                          <h4 style={{ color: "#ff6a61" }} className="text-center">
+                            Welcome To Tide Bank
                           </h4>
                           <h6 className="font-weight-semibold mb-4">
                             Please sign in to continue.
@@ -213,9 +306,9 @@ const Login = () => {
                                     <Form.Control
                                       className="form-control"
                                       placeholder="Enter your email"
-                                      name="username"
+                                      name="email"
                                       type="text"
-                                      value={loginObj.username}
+                                      value={loginObj.email}
                                       onChange={handleUserChange}
                                       required
                                     />
@@ -232,44 +325,31 @@ const Login = () => {
                                       required
                                     />
                                   </Form.Group>
-                                  {/* <Form.Group className="form-group">
-                                    <Select
-                                      options={LoginIssureOptions}
-                                      // placeholder="Select Account"
-                                       //defaultValue={0}
-                                       value={issureoptionState}
-                                      // onChange={handleAccountChange}
-                                    />
-                                  </Form.Group> */}
-
-                                  <Form.Group className="form-group">
-                                    <Select
-                                      options={LoginOptions}
-                                      // placeholder="Select Account"
-                                      // defaultValue={0}
-                                      value={loginoptionState}
-                                      onChange={handleAccountChange}
-                                    />
-                                  </Form.Group>
 
                                   <Button
                                     variant=""
                                     type="submit"
                                     className="btn btn-primary btn-block"
-                                    // onClick={movetodashboardpage}
+                                    disabled={!loginObj.password || !loginObj.email}
                                   >
                                     Sign In
                                   </Button>
 
-                                  {/* <div className="main-signin-footer text-center mt-3">
-                                    <p></p>
+                                  <div className="main-signin-footer text-center mt-3">
+                                    {/* <p>
                                       <Link to="#" className="mb-3">
                                         Forgot password?
                                       </Link>
+                                    </p> */}
+                                    <p onClick={()=>handleRegisterHereClick(true)}  role="button" >
+                                      {/* <Link to="#" className="mb-3"> */}
+                                        Register Here
+                                      {/* </Link> */}
                                     </p>
-                                  </div> */}
+                                    
+                                  </div>
                                 </Form>
-                                <p
+                                {/* <p
                                   style={{
                                     color: "lightgrey",
                                     position: "absolute",
@@ -292,11 +372,112 @@ const Login = () => {
                                       }}
                                     />
                                   </span>
-                                </p>
+                                </p> */}
                               </div>
                             </div>
                           </div>
                         </div>
+                        :
+                        <div className="main-signup-header ">
+                           {/* <h4 style={{ color: "#ff6a61" }} className="text-center">
+                            Welcome To Tide Bank
+                          </h4> */}
+                          <h4 style={{ color: "#ff6a61" }} className="text-center">
+                            Register Here
+                          </h4>
+                          {/* <h6 className="font-weight-semibold mb-4">
+                            Please sign in to continue.
+                          </h6> */}
+                          <div className="panel panel-primary">
+                            <div className=" tab-menu-heading mb-2 border-bottom-0">
+                              <div className="tabs-menu1">
+                                <Form onSubmit={moveToLoginPage}>
+                                  <Form.Group className="form-group">
+                                    <Form.Label className="">Name *</Form.Label>{" "}
+                                    <Form.Control
+                                      className="form-control"
+                                      placeholder="Enter your email"
+                                      name="name"
+                                      type="text"
+                                      value={register.name}
+                                      onChange={handleRegisterChange}
+                                      required
+                                    />
+                                  </Form.Group>
+                                  <Form.Group className="form-group">
+                                    <Form.Label className="">Address *</Form.Label>{" "}
+                                    <Form.Control
+                                      className="form-control"
+                                      placeholder="Enter your email"
+                                      name="address"
+                                      type="text"
+                                      value={register.address}
+                                      onChange={handleRegisterChange}
+                                      required
+                                    />
+                                  </Form.Group>
+                                  <Form.Group className="form-group">
+                                    <Form.Label className="">Email *</Form.Label>{" "}
+                                    <Form.Control
+                                      className="form-control"
+                                      placeholder="Enter your email"
+                                      name="email"
+                                      type="text"
+                                      value={register.email}
+                                      onChange={handleRegisterChange}
+                                      required
+                                    />
+                                  </Form.Group>
+                                  <Form.Group className="form-group">
+                                    <Form.Label>Password *</Form.Label>{" "}
+                                    <Form.Control
+                                      className="form-control"
+                                      placeholder="Enter your password"
+                                      name="password"
+                                      type="password"
+                                      value={register.password}
+                                      onChange={handleRegisterChange}
+                                      required
+                                    />
+                                  </Form.Group>
+                                  <Form.Group className="form-group">
+                                    <Form.Label>Confirm Password *</Form.Label>{" "}
+                                    <Form.Control
+                                      className="form-control"
+                                      placeholder="Enter your password"
+                                      name="confirmPassword"
+                                      type="password"
+                                      value={register.confirmPassword}
+                                      onChange={handleRegisterChange}
+                                      required
+                                    />
+                                  </Form.Group>
+                                  {error &&   <p style={{color:"#f00101"}} className="text-center">
+                                      
+                                    {error}
+                                    </p>}
+
+                                  <Button
+                                    variant=""
+                                    type="submit"
+                                    className="btn btn-primary btn-block"
+                                    disabled={isRegisterDisabled()}
+                                  >
+                                    Register
+                                  </Button>
+
+                                  <div className="main-signin-footer text-center mt-3"  role="button" >
+                                    <p onClick={()=>handleRegisterHereClick(false)}>
+                                      Sign In
+                                    </p>
+                                    
+                                  </div>
+                                </Form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>}
+                        
                       </div>
                     </div>
                   </div>

@@ -15,3 +15,10 @@ export const UserProfilereq = (payload)=>{
 
   }
 }
+
+export const registerUserAction = (payload) => {
+  return {
+    type: SagaActionTypes.REGISTER_USER,
+    payload,
+  };
+};

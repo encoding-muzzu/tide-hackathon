@@ -7,4 +7,5 @@ export const CUSTOMERREPORTREQUEST = "GetCustomerTxnDataActionREQ"
 
 export const WEBHOOKDETAILSREQUEST = "GetVcipWebhookDetailsActionreqpayload";
 export const HEADINGOFNAVBARREQ = "HeadingOfNavbarREQ";
-export const USERPROFILEREQ = "UserProfileActionREQ"
+export const USERPROFILEREQ = "UserProfileActionREQ";
+export const REGISTER_USER = "REGISTER_USER"; 

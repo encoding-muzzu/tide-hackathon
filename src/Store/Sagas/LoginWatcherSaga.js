@@ -2,7 +2,11 @@ import { put, takeLatest, call, retry, takeEvery } from "redux-saga/effects";
 import Axios from "../../services/axios";
 import * as SagaActionTypes from "../SagaActions/SagaActionTypes";
 import { toast } from "react-toastify";
+import axios from "axios";
+
 import { getAPI, postAPI } from "./ApiMethods";
+
+const baseURL = "https://d33rdsqeflhtup.cloudfront.net"
 
 // const logindata = (payload) => {
 
@@ -37,21 +41,108 @@ import { getAPI, postAPI } from "./ApiMethods";
 //   })
 // };
 
-function* getloginSaga(action) {
-  const data = {
-    username: action?.payload?.username,
-    password: action?.payload?.password,
-    rid: 5,
-    rolename: "User",
-    authflag: 1,
-  };
-  try {
-    const resp = yield call(postAPI, "UserAuthentication", data);
-    toast.info(JSON.stringify(resp.desc));
-    sessionStorage.setItem("authkey", JSON.stringify(resp));
-    action?.payload?.callback(resp);
 
-    const authToken = resp?.authkey;
+const getMethod = (url) => {
+  return axios
+    .get(`${baseURL}${url}`)
+    .then((res) => {
+      // console.log(res,"---------------------->")
+    return res?.data;
+  })
+  .catch((err) => {
+    console.log(err)
+  return err
+});
+}
+
+const postMethod = (url, body) => {
+
+  console.log("hitting post in saga", `${baseURL}${url}`, body);
+
+  return axios.post(`${baseURL}${url}`,body)
+  .then((response) => {
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Unable to login");
+    }
+  });
+  // return axios
+  //   .post(`${baseURL}${url}`,body)
+  //   .then((res) => {
+  //     // console.log(res,"---------------------->")
+  //     return res?.data;
+  //   })
+  //   .catch((err) => {
+  //     console.log(err)
+  //   return err})
+    // .then((response) =>
+    //   response.data.results.map((user) => ({
+    //     name: `${user.name.first} ${user.name.last}`,
+    //     username: `${user.login.username}`,
+    //     email: `${user.email}`,
+    //     image: `${user.picture.thumbnail}`,
+    //   }))
+    // )
+    // .then((users) => {
+    //   this.setState({ users, isLoading: false });
+    // })
+    // .catch((error) => this.setState({ error, isLoading: false }));
+};
+
+function* getloginSaga(action) {
+  try {
+    const resp = yield call(postMethod, "/login", action.payload.model);
+    console.log("login resp", resp);
+    if(resp.code === "ERR_NETWORK"){
+      // toast.info(resp.message);
+      // toast.error(resp.message);
+      action?.payload?.callback(resp,true);
+      return
+    }
+
+    if (resp && resp?.respcode === "200") {
+
+      // toast.info(JSON.stringify(resp.desc));
+      action?.payload?.callback(resp);
+    }
+
+    // sessionStorage.setItem("authkey", JSON.stringify(test));
+
+    // const authToken = resp?.authkey;
+    // console.log(authToken , "Login Auth responce")
+  } catch (err) {
+    action?.payload?.callback({ data: err });
+  }
+}
+
+function* registerUser(action) {
+  // const data = {
+  //   username: action?.payload?.username,
+  //   password: action?.payload?.password,
+  //   rid: 5,
+  //   rolename: "User",
+  //   authflag: 1,
+  // };
+
+  try {
+    const resp = yield call(postAPI, "/register", action.payload.model);
+    console.log("regis resp", resp.code);
+    if(resp.code === "ERR_NETWORK"){
+      // toast.info(resp.message);
+      // toast.error(resp.message);
+
+      action?.payload?.callback(resp,true);
+      return
+    }
+    if (resp && resp?.respcode === "200") {
+
+      // sessionStorage.setItem("authkey", JSON.stringify(test));
+      action?.payload?.callback(resp);
+    }
+    // toast.info(JSON.stringify(resp.desc));
+
+    // const authToken = resp?.authkey;
     // console.log(authToken , "Login Auth responce")
   } catch (err) {
     action?.payload?.callback({ data: err });
@@ -72,4 +163,5 @@ function* getprofileSaga(action) {
 export default function* LoginWatcherSaga() {
   yield takeEvery(SagaActionTypes.LOGINREQUEST, getloginSaga);
   yield takeEvery(SagaActionTypes.USERPROFILEREQ, getprofileSaga);
+  yield takeEvery(SagaActionTypes.REGISTER_USER, registerUser)
 }
