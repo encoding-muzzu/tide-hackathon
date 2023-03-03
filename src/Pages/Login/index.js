@@ -109,6 +109,7 @@ const Login = () => {
       return;
     }
     setLoad(false);
+    navigate("dashboard/");
   };
 
   const moveToLoginPage = (e) =>{

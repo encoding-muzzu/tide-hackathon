@@ -6,13 +6,14 @@ import axios from "axios";
 
 import { getAPI, postAPI } from "./ApiMethods";
 
-const baseURL = "http://ec2-15-206-146-70.ap-south-1.compute.amazonaws.com"
+// "http://10.10.1.117:3000" || 
+// const baseURL = "http://ec2-15-206-146-70.ap-south-1.compute.amazonaws.com"
+const baseURL = "http://localhost:5000"
 
 const getMethod = (url) => {
   return axios
     .get(`${baseURL}${url}`)
     .then((res) => {
-      // console.log(res,"---------------------->")
     return res?.data;
   })
   .catch((err) => {
@@ -37,8 +38,7 @@ const postMethod = (url, body) => {
 
 function* getloginSaga(action) {
   try {
-    const resp = yield call(postMethod, "/login", action.payload.model);
-    // console.log("login resp", resp, action.payload.callback());
+    const resp = yield call(postAPI, "/login", action.payload.model);
     if(resp?.status !== 200){
       action?.payload?.callback(resp?.data,true);
       return
@@ -46,7 +46,6 @@ function* getloginSaga(action) {
     if (resp && resp?.status === 200) {
       action?.payload?.callback(resp?.data);
     }
-    // sessionStorage.setItem("authkey", JSON.stringify(test));
   } catch (err) {
     action?.payload?.callback({ data: err });
   }
