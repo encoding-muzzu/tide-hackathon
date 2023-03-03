@@ -4,6 +4,8 @@ import {
   Row,
 } from "react-bootstrap";
 import DataTable from "react-data-table-component";
+import Table from 'react-bootstrap/Table';
+
 
 const SendAmount = () => {
 
@@ -52,9 +54,9 @@ const SendAmount = () => {
             />
             </Col>
         </Row>
-
       </div>
-    </>
+  </>
+     
   );
 };
 

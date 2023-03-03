@@ -101,19 +101,28 @@ const Login = () => {
   };
 
   const loginRespData = (data,error) => {
-    console.log("login resspp", data);
+    // console.log("login resspp------", data,error);
     sessionStorage.setItem("authkey", JSON.stringify(data));
     if(error){
-      toast.error(data.message);
+      toast.error(data?.data?.message);
       setLoad(false);
       return;
     }
+    if(data?.data?.message && data.data.status !== 200){
+      toast.error(data?.data?.message);
+    }else if(data?.data?.status === 200){
+      toast.success(data?.data?.message)
+      sessionStorage.setItem("token",data?.data?.data?.token);
+      navigate("dashboard/");
+    }
     setLoad(false);
-    navigate("dashboard/");
+    // if()
   };
 
   const moveToLoginPage = (e) =>{
     console.log("reginster hit");
+    // navigate('/login');
+// return;
     e.preventDefault();
     if(register.password !== register.confirmPassword ){
       showError("Password doesn't match")
@@ -134,11 +143,18 @@ const Login = () => {
   
   const registerRespData = (data,error) =>{
     if(error){
+      toast.error(data?.data?.message);
       setLoad(false);
-      toast.error(data.message);
       return;
     }
-    // console.log(data,"=====================reg ressss");
+    if(data?.data?.message && data.data.status !== 200){
+      toast.error(data?.data?.message);
+    }else if(data?.data?.status === 200){
+      toast.success(data?.data?.message);
+      console.log("reg success");
+      // navigate('/login');
+      setRegisterHere(false)
+    }
     setLoad(false);
   }
 

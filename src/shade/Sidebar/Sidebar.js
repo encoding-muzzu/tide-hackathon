@@ -210,7 +210,7 @@ const Sidebar = () => {
           className="hor-scroll"
           style={{ position: "absolute" }}
         >
-          <div className="main-sidebar-header active" style={{ height: "64px" }}>
+          {/* <div className="main-sidebar-header active" style={{ height: "64px" }}>
             <NavLink className="header-logo active" to={`/dashboard`}>
               <img
                 src="/Images/synizenLogo.svg"
@@ -244,11 +244,10 @@ const Sidebar = () => {
             <NavLink className="header-logo active" to={`/CustomerReport`}> </NavLink>
             <NavLink className="header-logo active" to={`/LiveTxn`}> </NavLink>
 
-
-
-
-          </div>
-          <div className="main-sidemenu" style={{ marginTop: "70px" }}>
+          </div> */}
+          <div className="main-sidemenu" 
+          // style={{ marginTop: "70px" }}
+          >
             <div className="slide-left disabled" id="slide-left">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

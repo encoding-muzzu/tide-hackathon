@@ -1,10 +1,23 @@
-import React from "react";
+// import { navigate } from "@reach/router";
+import React, {useEffect} from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+
 import {
   Col,
   Row,
 } from "react-bootstrap";
 import Table from 'react-bootstrap/Table';
 const Dashboard = () => {
+  const navigate = useNavigate();
+
+
+  useEffect(()=>{
+    const isLoggedIn = sessionStorage.getItem("token");
+    if(!isLoggedIn){
+      navigate("/");
+    }
+  },[])
 
   return (
     <>

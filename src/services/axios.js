@@ -6,6 +6,7 @@ const instance = axios.create({
 
 
 instance.defaults.headers.common["Content-Type"] = "application/json";
+// instance.defaults.headers.common["Content-Type"] = "text/plain";
 instance.defaults.headers.common["apikey"] =
   "0";
 
