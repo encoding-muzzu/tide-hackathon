@@ -28,14 +28,21 @@ const Dashboard = () => {
     }
   }, []);
 
-  const useProfileResponseData = (data) => {
-    console.log(data?.data?.data ,"yy!");
+  const useProfileResponseData = (data,error) => {
+    if(error){
+      // console.log("+++++++++++++++++++++++++++",data);
+      toast.error(data?.data?.message);
+      // setLoad(false);
+      return;
+    }
+    // console.log(data?.data?.data ,"yy!");
     if(data?.data?.status !== 200){
+      // console.log("+++++++++++++");
       toast.error(data?.data?.message);
       sessionStorage.clear();
       navigate("/");
     }else if(data?.data?.status === 200){
-      console.log("++++++++++++",data.data);
+      // console.log("++++++++++++",data.data);
       setUserData(data?.data?.data);
       dispatch(getUserProfile(data?.data?.data));
     }
@@ -52,7 +59,10 @@ const Dashboard = () => {
     <>
       <div className="wrap" style={{ marginLeft: "-16px ", color:"black", fontWeight:"600" }}>
         <div className="example" style={{ border: "none" }}>
-          <h3 className="text-primary mb-3 text-center mt-3 mb-5">Tide Bank Dashboard</h3>
+          <h4 className="text-primary text-center mt-3">
+            Hi, <span className="text-uppercase">{userData?.name || ""}</span> 
+          </h4>
+          <h3 className="text-primary mb-3 text-center mt-3 mb-5">Welcome to Tide Bank</h3>
           <div className="w-75 mx-auto">
 
          
@@ -67,7 +77,7 @@ const Dashboard = () => {
                   </tr>
                   <tr>
                     <td>Email</td>
-                    <td colSpan={1}>{userData?.email || "-"}</td>
+                    <td colSpan={0}>{userData?.email || "-"}</td>
                   </tr>
                   <tr>
                     <td>Address</td>
@@ -80,6 +90,10 @@ const Dashboard = () => {
                   <tr>
                     <td>Currency Symbol</td>
                     <td>{userData?.cur_symbol || "-"} </td>
+                  </tr>
+                  <tr>
+                    <td> KYC </td>
+                    <td className={userData?.is_kyc === false ? "text-primary":"text-success"}>{userData?.is_kyc ? "Verified":"Not Verified" } </td>
                   </tr>
                 </tbody>
               </Table>
@@ -96,14 +110,14 @@ const Dashboard = () => {
               )}
             </Col>
           </Row>
-          <Row className="gap-3 my-3">
+          {/* <Row className="gap-3 my-3">
             <Col className="border border-primary  rounded p-4">
               <h5>QR Code </h5>
             </Col>
             <Col className="border border-primary rounded p-4">
               <h5>Wallet Balance</h5>{" "}
             </Col>
-          </Row>
+          </Row> */}
         </div>
         </div>
       </div>

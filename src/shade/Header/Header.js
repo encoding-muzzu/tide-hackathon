@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Navbar, Dropdown, Button, Form, Col, Row, Modal } from "react-bootstrap";
 import { Scrollbars } from "react-custom-scrollbars";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import { InvertColors } from "@material-ui/icons";
 
 export default function Header() {
   const [Lang, setLang] = React.useState(false);
-  // const headerName =  useSelector((store)=> store.HomeReducer.isName)
+  const {userData} =  useSelector((store)=> store.HomeReducer)
   function Fullscreen() {
     if (
       (document.fullScreenElement && document.fullScreenElement === null) ||
@@ -90,6 +90,11 @@ export default function Header() {
 
   }
 
+  useEffect(()=>{
+    console.log("headerrrrrrrrrrrrrr", userData);
+    setHeaderName(userData?.name)
+  },[userData])
+
   React.useEffect(() => {
     compare();
     // eslint-disable-next-line 
@@ -108,11 +113,11 @@ export default function Header() {
     setPrice(price);
   };
 
-  React.useEffect(() => {
-    const authkey = JSON.parse(sessionStorage.getItem("authkey"))
-    total();
-    setHeaderName(authkey.acccode)
-  })
+  // React.useEffect(() => {
+  //   const authkey = JSON.parse(sessionStorage.getItem("authkey"))
+  //   total();
+  //   setHeaderName(authkey.acccode)
+  // })
   let navigate = useNavigate();
   const routeChange = () => {
     let path = `/`;
@@ -306,7 +311,7 @@ export default function Header() {
                           />
                         </div>
                         <div className="ms-3 my-auto">
-                          <h6 className="tx-15 font-weight-semibold mb-0">    {headerName ? headerName : 'Syntizen'}
+                          <h6 className="tx-15 font-weight-semibold mb-0">    {userData?.name || 'Syntizen'}
                           </h6>
                           {/* <span className="dropdown-title-text subtext op-6  tx-12">
                             An M2P Company
@@ -314,29 +319,6 @@ export default function Header() {
                         </div>
                       </div>
                     </div>
-                    {/* <Dropdown.Item className="dropdown-item" onClick={() => { auth.signOut(); routeChange() }} >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="side-menu__icon profileDropIcon"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M20.995 6.9a.998.998 0 0 0-.548-.795l-8-4a1 1 0 0 0-.895 0l-8 4a1.002 1.002 0 0 0-.547.795c-.011.107-.961 10.767 8.589 15.014a.987.987 0 0 0 .812 0c9.55-4.247 8.6-14.906 8.589-15.014zM12 19.897C5.231 16.625 4.911 9.642 4.966 7.635L12 4.118l7.029 3.515c.037 1.989-.328 9.018-7.029 12.264z" />
-                        <path d="m11 12.586-2.293-2.293-1.414 1.414L11 15.414l5.707-5.707-1.414-1.414z" />
-                      </svg>Change Password
-                    </Dropdown.Item>
-                    <Dropdown.Item className="dropdown-item" onClick={() => { auth.signOut(); routeChange() }} >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="side-menu__icon profileDropIcon"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M20 17V7c0-2.168-3.663-4-8-4S4 4.832 4 7v10c0 2.168 3.663 4 8 4s8-1.832 8-4zM12 5c3.691 0 5.931 1.507 6 1.994C17.931 7.493 15.691 9 12 9S6.069 7.493 6 7.006C6.069 6.507 8.309 5 12 5zM6 9.607C7.479 10.454 9.637 11 12 11s4.521-.546 6-1.393v2.387c-.069.499-2.309 2.006-6 2.006s-5.931-1.507-6-2V9.607zM6 17v-2.393C7.479 15.454 9.637 16 12 16s4.521-.546 6-1.393v2.387c-.069.499-2.309 2.006-6 2.006s-5.931-1.507-6-2z" />
-                      </svg> Help
-                    </Dropdown.Item> */}
                     <Dropdown.Item className="dropdown-item" onClick={() => { routeChange() }} >
                       <i className="far fa-arrow-alt-circle-left"></i> Sign Out
                     </Dropdown.Item>

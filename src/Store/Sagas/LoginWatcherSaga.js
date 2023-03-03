@@ -9,12 +9,14 @@ import { getAPI, postAPI } from "./ApiMethods";
 // "http://10.10.1.117:3000" || https://d33rdsqeflhtup.cloudfront.net || http://ec2-15-206-146-70.ap-south-1.compute.amazonaws.com || http://10.10.1.117/
 
 // const baseURL = "http://ec2-15-206-146-70.ap-south-1.compute.amazonaws.com"
-const baseURL = "http://192.168.1.6"
+const baseURL = "http://192.168.251.182"
 
 const getMethod = (url) => {
   const token = sessionStorage.getItem("token");
   if (!token) {
-    return;
+    // toast.error("lol")
+    // window.location.replace("/");
+    // return "Token Expired";
   }
   return axios
     .get(`${baseURL}${url}`, {
