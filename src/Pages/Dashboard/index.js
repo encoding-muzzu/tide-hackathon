@@ -53,7 +53,7 @@ const Dashboard = () => {
       <div className="wrap" style={{ marginLeft: "-16px ", color:"black", fontWeight:"600" }}>
         <div className="example" style={{ border: "none" }}>
           <h4 className="text-primary text-center mt-3">
-            Hi, {userData?.name.toUpperCase() || ""} 
+            Hi, <span className="text-uppercase">{userData?.name || ""}</span> 
           </h4>
           <h3 className="text-primary mb-3 text-center mt-3 mb-5">Welcome to Tide Bank</h3>
           <div className="w-75 mx-auto">
@@ -70,7 +70,7 @@ const Dashboard = () => {
                   </tr>
                   <tr>
                     <td>Email</td>
-                    <td colSpan={1}>{userData?.email || "-"}</td>
+                    <td colSpan={0}>{userData?.email || "-"}</td>
                   </tr>
                   <tr>
                     <td>Address</td>
