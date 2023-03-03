@@ -12,6 +12,7 @@
     "@fullcalendar/timegrid": "^5.11.3",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
+    "@mui/system": "^5.11.11",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "axios": "^1.1.3",
@@ -26,9 +27,14 @@
     "react-bootstrap": "^2.5.0",
     "react-countdown-now": "^2.1.2",
     "react-custom-scrollbars": "^4.2.1",
+    "react-data-table-component": "^7.5.3",
+    "react-data-table-component-extensions": "^1.6.0",
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.2.0",
+    "react-draft-wysiwyg": "^1.15.0",
     "react-hot-toast": "^2.4.0",
+    "react-intl-tel-input": "^8.2.0",
+    "react-lightgallery": "^0.9.0",
     "react-multiple-select-dropdown-lite": "^2.0.6",
     "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
@@ -39,6 +45,10 @@
     "redux": "^4.2.0",
     "redux-saga": "^1.2.1",
     "sass": "^1.54.8",
+    "slick-carousel": "^1.8.1",
+    "styled-components": "^5.3.8",
+    "sweetalert2": "^11.4.30",
+    "swiper": "^8.3.2",
     "web-vitals": "^3.0.1",
     "xlsx": "^0.18.5"
   },
@@ -46,16 +56,12 @@
     "start": "react-scripts start",
     "start:lq": "env-cmd -f .env.lq react-scripts start",
     "start:tc": "env-cmd -f .env.tc react-scripts start",
-
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "winBuild": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build",
-
     "build:lq": "env-cmd -f .env.lq npm run-script build",
     "winbuild:lq": "env-cmd -f .env.lq npm run-script winBuild",
-    
     "build:tc": "env-cmd -f .env.tc npm run-script build",
     "winBuild:tc": "env-cmd -f .env.tc npm run-script winBuild",
-
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
