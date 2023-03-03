@@ -25,5 +25,6 @@ deploy_to_dev:
         - ls -la 
         #- cd ./out
         - aws s3 cp . s3://$AWS_BUCKET_DEV/ --recursive
+        - aws cloudfront create-invalidation --distribution-id=E3RUOVI2BN8O04 --paths "/*"
     only:
         - DEV
