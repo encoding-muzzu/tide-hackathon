@@ -11,19 +11,21 @@ import { getAPI, postAPI } from "./ApiMethods";
 // const baseURL = "http://ec2-15-206-146-70.ap-south-1.compute.amazonaws.com"
 const baseURL = "http://192.168.251.182"
 
+const token = sessionStorage.getItem("token");
 const getMethod = (url) => {
-  const token = sessionStorage.getItem("token");
-  if(!token){
+  if (!token) {
     // toast.error("lol")
     // window.location.replace("/");
     // return "Token Expired";
   }
   return axios
-    .get(`${baseURL}${url}`,{  headers: {
-      'Authorization': `Basic ${token}` 
-    }})
+    .get(`${baseURL}${url}`, {
+      headers: {
+        'Authorization': `Basic ${token}`
+      }
+    })
     .then((res) => {
-      console.log("***",res);
+      console.log("***", res);
       return res;
       if (res.status === 200) {
         return res;
@@ -31,40 +33,58 @@ const getMethod = (url) => {
         return res;
         // throw new Error("Unable to login");
       }
-  })
-  .catch((err) => {
-    console.log(err)
-    return err
-  });
+    })
+    .catch((err) => {
+      console.log(err)
+      return err
+    });
 }
 
 const postMethod = (url, body) => {
 
   console.log("hitting post in saga", `${baseURL}${url}`, body);
-  return axios.post(`${baseURL}${url}`,body,{
-    'Content-Type': "application/json"
-  })
-  .then((response) => {
-    if (response.status === 200) {
-      return response;
-    } else {
-      throw new Error("Unable to login");
+  return axios.post(`${baseURL}${url}`, body, {
+    'Content-Type': "application/json",
+    headers: {
+      'Authorization': `Basic ${token}`
     }
-  }).catch(error => {throw new Error("Unable to login")});
+  })
+    .then((response) => {
+      if (response.status === 200) {
+        return response;
+      } else {
+        throw new Error("Unable to login");
+      }
+    }).catch(error => { throw new Error("Unable to login") });
 };
 
 function* getloginSaga(action) {
   try {
     const resp = yield call(postMethod, "/login", action.payload.model);
     // console.log("logggggggggggggggggggggggggg***************",resp);
-    if(resp?.status !== 200){
-      action?.payload?.callback(resp,true);
+    if (resp?.status !== 200) {
+      action?.payload?.callback(resp, true);
       return
     }
     if (resp && resp?.status === 200 && resp?.data?.status === 200) {
       action?.payload?.callback(resp);
-    }else{
-      action?.payload?.callback(resp,true);
+    } else {
+      action?.payload?.callback(resp, true);
+    }
+  } catch (err) {
+    action?.payload?.callback({ data: err });
+  }
+}
+
+function* getTransactionsSaga(action) {
+  try {
+    const resp = yield call(getMethod, "/transactions");
+    if (resp?.status !== 200) {
+      action?.payload?.callback(resp?.data, true);
+      return
+    }
+    if (resp && resp?.status === 200) {
+      action?.payload?.callback(resp?.data);
     }
   } catch (err) {
     action?.payload?.callback({ data: err });
@@ -75,15 +95,31 @@ function* registerUser(action) {
 
   try {
     const resp = yield call(postMethod, "/register", action.payload.model);
-    console.log("regis resp", resp.code);
-    if(resp?.status !== 200){
-      action?.payload?.callback(resp,true);
+    if (resp?.status !== 200) {
+      action?.payload?.callback(resp, true);
       return
     }
     if (resp && resp?.status === 200 && resp?.data?.status === 200) {
       action?.payload?.callback(resp);
-    }else{
-      action?.payload?.callback(resp,true);
+    } else {
+      action?.payload?.callback(resp, true);
+    }
+  } catch (err) {
+    action?.payload?.callback({ data: err });
+  }
+}
+function* getTransferSaga(action) {
+
+  try {
+    const resp = yield call(postMethod, "/transfer", action.payload.model, token);
+    if (resp?.status !== 200) {
+      action?.payload?.callback(resp, true);
+      return
+    }
+    if (resp && resp?.status === 200 && resp?.data?.status === 200) {
+      action?.payload?.callback(resp);
+    } else {
+      action?.payload?.callback(resp, true);
     }
   } catch (err) {
     action?.payload?.callback({ data: err });
@@ -94,15 +130,14 @@ function* getUserProfile(action) {
 
   try {
     const resp = yield call(getMethod, "/profile");
-    console.log("profile resp", resp);
-    if(resp?.status !== 200){
-      action?.payload?.callback(resp,true);
+    if (resp?.status !== 200) {
+      action?.payload?.callback(resp, true);
       return
     }
     if (resp && resp?.status === 200 && resp?.data?.status === 200) {
       action?.payload?.callback(resp);
-    }else{
-      action?.payload?.callback(resp,true);
+    } else {
+      action?.payload?.callback(resp, true);
     }
   } catch (err) {
     action?.payload?.callback({ data: err });
@@ -111,7 +146,7 @@ function* getUserProfile(action) {
 
 function* getprofileSaga(action) {
   try {
-    const resp = yield call(postAPI, "UserProfile");
+    const resp = yield call(postMethod, "UserProfile");
     toast.info(JSON.stringify(resp.desc));
     action?.payload?.callback(resp);
     sessionStorage.setItem("accid", resp?.accid);
@@ -123,6 +158,9 @@ function* getprofileSaga(action) {
 export default function* LoginWatcherSaga() {
   yield takeEvery(SagaActionTypes.LOGINREQUEST, getloginSaga);
   yield takeEvery(SagaActionTypes.USERPROFILEREQ, getprofileSaga);
+  yield takeEvery(SagaActionTypes.REGISTER_USER, registerUser)
+  yield takeEvery(SagaActionTypes.TRANSACTIONS, getTransactionsSaga)
   yield takeEvery(SagaActionTypes.REGISTER_USER, registerUser);
-  yield takeEvery(SagaActionTypes.GET_USER_PROFILE ,getUserProfile);
+  yield takeEvery(SagaActionTypes.GET_USER_PROFILE, getUserProfile);
+  yield takeEvery(SagaActionTypes.POST_TRANSFER, getTransferSaga);
 }
