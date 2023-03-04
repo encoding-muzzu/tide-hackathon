@@ -96,14 +96,16 @@ const Dashboard = () => {
       // amount: getSendAmount?.amount,
       // description: "adfs"
     }
-    dispatch(kycAction({ model, callback: respKyc }))
     setLoad(true);
+    dispatch(kycAction({ model, callback: respKyc }))
 
 
   };
 
   const respKyc = (data) => {
     setLoad(false);
+    setTogglePopup(false);
+    dispatch(getUserProfileAction({ callback: useProfileResponseData }));
     if (data?.data?.status === 200) {
       console.log(data?.data?.status, '-p>')
     } else {
@@ -151,7 +153,7 @@ const Dashboard = () => {
                     </tr>
                     <tr>
                       <td> KYC </td>
-                      <td className={userData?.is_kyc === false ? "text-primary" : "text-success"}>{userData?.is_kyc ? "Verified" : "Not Verified"} </td>
+                      <td className={userData?.is_kyc === false ? "text-primary cursor-pointer" : "text-success"}>{userData?.is_kyc ? "Verified" :  <span onClick={()=>setTogglePopup(true)}> <span className="fa fa-exclamation-circle me-2"> </span>Not Verified</span>} </td>
                     </tr>
                   </tbody>
                 </Table>
@@ -171,8 +173,9 @@ const Dashboard = () => {
 
             {
               // true &&
-              !togglePopup &&
+              togglePopup &&
               <Wrapper>
+                {load && <Loader />}
                 <Popup
                   heading="KYC Form"
                   close={handlePopupClose}

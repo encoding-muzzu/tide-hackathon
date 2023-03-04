@@ -178,7 +178,6 @@ function* getprofileSaga(action) {
 export default function* LoginWatcherSaga() {
   yield takeEvery(SagaActionTypes.LOGINREQUEST, getloginSaga);
   yield takeEvery(SagaActionTypes.USERPROFILEREQ, getprofileSaga);
-  yield takeEvery(SagaActionTypes.REGISTER_USER, registerUser)
   yield takeEvery(SagaActionTypes.TRANSACTIONS, getTransactionsSaga)
   yield takeEvery(SagaActionTypes.REGISTER_USER, registerUser);
   yield takeEvery(SagaActionTypes.GET_USER_PROFILE, getUserProfile);

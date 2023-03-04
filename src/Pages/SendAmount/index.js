@@ -11,13 +11,17 @@ import {
   getUserProfileAction,
   transactionsAction,
   transferAction,
+  kycAction
 } from "../../Store/SagaActions/LoginSagaAction";
 import toast from "react-hot-toast";
+
+
 
 import { useNavigate } from "react-router";
 import Loader from "../../shade/Loaders/Loaders";
 // import "SendAmount/sendAmount.css";
 import "./sendAmount.css";
+import KycFields from "../kyc/kycFields";
 
 const SendAmount = () => {
   const dispatch = useDispatch();
@@ -25,6 +29,9 @@ const SendAmount = () => {
   const [getSendAmount, setSendAmount] = useState({});
   const [transHistoryList, setTransHistoryList] = useState([]);
   const [load, setLoad] = useState(false);
+  const [togglePopupKYC, setTogglePopupKYC] = useState(false);
+  const [kycData, setKycData] = useState({});
+
   const { userData } = useSelector((store) => store.HomeReducer);
 
   const navigate = useNavigate();
@@ -33,6 +40,11 @@ const SendAmount = () => {
     transactions();
     dispatch(getUserProfileAction({ callback: useProfileResponseData }));
   }, [dispatch]);
+
+  const handlePopupCloseKYC = () => {
+    setTogglePopupKYC(!togglePopupKYC);
+  };
+
 
   const useProfileResponseData = (data, error) => {
     if (error) {
@@ -125,6 +137,39 @@ const SendAmount = () => {
     dispatch(transferAction({ model, callback: respTransferData }));
     setLoad(true);
   };
+
+  const handleInputChangeKYC = (event) => {
+    const { id, value } = event.target;
+    setKycData(prevState => ({
+      ...prevState,
+      [id]: value
+    }))
+  }
+
+  const handleSubmitKYC = (event) => {
+    event.preventDefault();
+    let model = {
+      // to_addr: getSendAmount?.toAddress,
+      // amount: getSendAmount?.amount,
+      // description: "adfs"
+    }
+    dispatch(kycAction({ model, callback: respKyc }))
+    setLoad(true);
+
+
+  };
+
+  const respKyc = (data) => {
+    setLoad(false);
+    if (data?.data?.status === 200) {
+      console.log(data?.data?.status, '-p>')
+    } else {
+      kycData({})
+    }
+    setTogglePopupKYC(false);
+    dispatch(getUserProfileAction({ callback: useProfileResponseData }));
+  };
+
   const respTransferData = (data) => {
     setLoad(false);
     console.log("data tf", data.data.status, data.data);
@@ -201,9 +246,28 @@ const SendAmount = () => {
             <p className="text-primary fs-5 mb-2" >
               <span className="fa fa-exclamation-circle me-2"></span>KYC not verified
             </p>
-            <p className="fs-6 text-center cursor-pointer" role="button">Please verify KYC</p>
+            <p className="fs-6 text-center cursor-pointer" role="button" onClick={handlePopupCloseKYC}>Please verify KYC</p>
             </div>
+            {
+            // true &&
+            togglePopupKYC &&
+            <Wrapper>
+              <Popup
+                heading="KYC Form"
+                close={handlePopupCloseKYC}
+                className="px860"
+                body={
+                  <KycFields
+                    handleInputChange={handleInputChangeKYC}
+                    kycData={kycData}
+                    handleSubmit={handleSubmitKYC}
+                  />
+                }
+              />
+            </Wrapper>
+          }
           </div>
+           
         )}
       </div>
     </>

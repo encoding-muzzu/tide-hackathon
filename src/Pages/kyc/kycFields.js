@@ -113,7 +113,7 @@ const KycFields
                         className="btn btn-primary btn-block"
                     // disabled={!loginObj.password || !loginObj.email}
                     >
-                        Pay
+                        Verify KYC
                     </Button>
 
                 </Form>
