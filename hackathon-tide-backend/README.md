@@ -1,10 +1,10 @@
 API:
-signup
-login
-create wallet
-show wallet balance
-send amount
-transaction history
+- signup
+- login
+- create wallet
+- show wallet balance
+- send amount
+- transaction history
 
 
 
