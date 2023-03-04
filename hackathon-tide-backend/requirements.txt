@@ -1,0 +1,5 @@
+web3
+flask
+flask_pymongo
+jwt
+Flask-JWT
