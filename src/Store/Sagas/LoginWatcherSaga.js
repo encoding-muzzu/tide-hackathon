@@ -9,10 +9,13 @@ import { getAPI, postAPI } from "./ApiMethods";
 // "http://10.10.1.117:3000" || https://d33rdsqeflhtup.cloudfront.net || http://ec2-15-206-146-70.ap-south-1.compute.amazonaws.com || http://10.10.1.117/
 
 // const baseURL = "http://ec2-15-206-146-70.ap-south-1.compute.amazonaws.com"
-const baseURL = "http://192.168.251.182"
+// const baseURL = "http://192.168.251.182"
+const baseURL = "http://192.168.1.9"
 
 const token = sessionStorage.getItem("token");
 const getMethod = (url) => {
+  const token = sessionStorage.getItem("token");
+  console.log(token, '-->')
   if (!token) {
     // toast.error("lol")
     // window.location.replace("/");
