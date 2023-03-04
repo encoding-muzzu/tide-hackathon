@@ -9,9 +9,8 @@ transaction history
 
 
 
-TOKEN Contract address: 0x78D3d32833c36ED92b78C3Ef6A1341A63991B3E4
-SYMBOL: SYN
+TOKEN Contract address: 0x5cBEBC7506AA8F9d4D9913ed31a90eDB29Ec541E
 
+Currency Name: Tide Bank
 
-mongodb user: muzammilahmed166
-mongodb pwd: Encoding136
+Currency Symbol: Tide
