@@ -128,6 +128,23 @@ function* getTransferSaga(action) {
     action?.payload?.callback({ data: err });
   }
 }
+function* getKycSaga(action) {
+
+  try {
+    const resp = yield call(postMethod, "/kyc", action.payload.model, token);
+    if (resp?.status !== 200) {
+      action?.payload?.callback(resp, true);
+      return
+    }
+    if (resp && resp?.status === 200 && resp?.data?.status === 200) {
+      action?.payload?.callback(resp);
+    } else {
+      action?.payload?.callback(resp, true);
+    }
+  } catch (err) {
+    action?.payload?.callback({ data: err });
+  }
+}
 
 function* getUserProfile(action) {
 
@@ -158,6 +175,7 @@ function* getprofileSaga(action) {
   }
 }
 
+
 export default function* LoginWatcherSaga() {
   yield takeEvery(SagaActionTypes.LOGINREQUEST, getloginSaga);
   yield takeEvery(SagaActionTypes.USERPROFILEREQ, getprofileSaga);
@@ -166,4 +184,5 @@ export default function* LoginWatcherSaga() {
   yield takeEvery(SagaActionTypes.REGISTER_USER, registerUser);
   yield takeEvery(SagaActionTypes.GET_USER_PROFILE, getUserProfile);
   yield takeEvery(SagaActionTypes.POST_TRANSFER, getTransferSaga);
+  yield takeEvery(SagaActionTypes.KYCREQUEST, getKycSaga);
 }

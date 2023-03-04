@@ -12,6 +12,7 @@ import {
   getUserProfile,
   loginSagaAction,
   UserProfilereq,
+  kycAction,
 } from "../../Store/SagaActions/LoginSagaAction";
 import toast from "react-hot-toast";
 
@@ -88,6 +89,29 @@ const Dashboard = () => {
     console.log(kycData)
   }, [kycData])
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    let model = {
+      // to_addr: getSendAmount?.toAddress,
+      // amount: getSendAmount?.amount,
+      // description: "adfs"
+    }
+    dispatch(kycAction({ model, callback: respKyc }))
+    setLoad(true);
+
+
+  };
+
+  const respKyc = (data) => {
+    setLoad(false);
+    if (data?.data?.status === 200) {
+      console.log(data?.data?.status, '-p>')
+    } else {
+      kycData({})
+    }
+  };
+
+
 
 
   return (
@@ -157,6 +181,7 @@ const Dashboard = () => {
                     <KycFields
                       handleInputChange={handleInputChange}
                       kycData={kycData}
+                      handleSubmit={handleSubmit}
                     />
                   }
                 />
