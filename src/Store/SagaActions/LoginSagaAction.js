@@ -54,3 +54,9 @@ export const transferAction = (payload) => {
     payload
   }
 }
+export const kycAction = (payload) => {
+  return {
+    type: SagaActionTypes.KYCREQUEST,
+    payload
+  }
+}

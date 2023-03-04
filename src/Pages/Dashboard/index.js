@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 // import Loader from "./shade/Loaders/Loaders"
 import Loader from "../../shade/Loaders/Loaders"
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   loginrequest,
   registerUserAction,
@@ -12,24 +12,41 @@ import {
   getUserProfile,
   loginSagaAction,
   UserProfilereq,
+  kycAction,
 } from "../../Store/SagaActions/LoginSagaAction";
 import toast from "react-hot-toast";
 
 import QRCode from "qrcode.react";
 import { Col, Row } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
+import KycFields from '../kyc/kycFields';
+import styled from "styled-components";
+import Popup from "../../services/popup";
 const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userData, setUserData] = useState({});
   const [load, setLoad] = useState(false);
+  const [isKyc, setIsKyc] = useState(false);
+  const [togglePopup, setTogglePopup] = useState(false);
+  const [kycData, setKycData] = useState({});
+  const kycStatus = useSelector((store) => store.HomeReducer?.userData?.is_kyc)
 
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("token");
+
     if (!isLoggedIn) {
       navigate("/");
     }
   }, []);
+
+  useEffect(() => {
+    console.log(kycStatus, '--isKyc')
+    if (!kycStatus) {
+      setIsKyc(kycStatus)
+    }
+  }, [kycStatus])
+
 
   const useProfileResponseData = (data, error) => {
     if (error) {
@@ -57,6 +74,45 @@ const Dashboard = () => {
     dispatch(getUserProfileAction({ callback: useProfileResponseData }));
   }, []);
 
+  const handlePopupClose = () => {
+    setTogglePopup(!togglePopup);
+  };
+  const handleInputChange = (event) => {
+    const { id, value } = event.target;
+    setKycData(prevState => ({
+      ...prevState,
+      [id]: value
+    }))
+  }
+
+  useEffect(() => {
+    console.log(kycData)
+  }, [kycData])
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    let model = {
+      // to_addr: getSendAmount?.toAddress,
+      // amount: getSendAmount?.amount,
+      // description: "adfs"
+    }
+    dispatch(kycAction({ model, callback: respKyc }))
+    setLoad(true);
+
+
+  };
+
+  const respKyc = (data) => {
+    setLoad(false);
+    if (data?.data?.status === 200) {
+      console.log(data?.data?.status, '-p>')
+    } else {
+      kycData({})
+    }
+  };
+
+
+
 
   return (
     <>
@@ -68,8 +124,6 @@ const Dashboard = () => {
           </h4>
           <h3 className="text-primary mb-3 text-center mt-3 mb-5">Welcome to Tide Bank</h3>
           <div className="w-75 mx-auto">
-
-
             <Row className="gap-3">
               <Col className="border border-primary rounded p-4">
                 <h5>User Details</h5>
@@ -114,6 +168,26 @@ const Dashboard = () => {
                 )}
               </Col>
             </Row>
+
+            {
+              // true &&
+              !togglePopup &&
+              <Wrapper>
+                <Popup
+                  heading="KYC Form"
+                  close={handlePopupClose}
+                  className="px860"
+                  body={
+                    <KycFields
+                      handleInputChange={handleInputChange}
+                      kycData={kycData}
+                      handleSubmit={handleSubmit}
+                    />
+                  }
+                />
+              </Wrapper>
+            }
+
             {/* <Row className="gap-3 my-3">
             <Col className="border border-primary  rounded p-4">
               <h5>QR Code </h5>
@@ -128,5 +202,43 @@ const Dashboard = () => {
     </>
   );
 };
+
+const Wrapper = styled.div`
+margin: 30px 0px;
+display: flex;
+justify-content: center;
+overflow-x: hidden;
+
+.formIncidents {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  background: #fff;
+
+  :last-child:nth-child(-1) {
+      background: yellow;
+  }
+  .mainContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      span {
+          width: 100%;
+          font-style: normal;
+          font-weight: 600;
+          font-size: 12px;
+          line-height: 18px;
+          color: #000000;
+          margin-top: 6px;
+          width: 84%;
+      }
+      
+  }
+}
+`;
+
 
 export default Dashboard;
