@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Navbar, Dropdown, Button, Form, Col, Row, Modal } from "react-bootstrap";
 import { Scrollbars } from "react-custom-scrollbars";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import { InvertColors } from "@material-ui/icons";
 
 export default function Header() {
   const [Lang, setLang] = React.useState(false);
-  const {userData} =  useSelector((store)=> store.HomeReducer)
+  const { userData } = useSelector((store) => store.HomeReducer)
   function Fullscreen() {
     if (
       (document.fullScreenElement && document.fullScreenElement === null) ||
@@ -90,10 +90,10 @@ export default function Header() {
 
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("headerrrrrrrrrrrrrr", userData);
     setHeaderName(userData?.name)
-  },[userData])
+  }, [userData])
 
   React.useEffect(() => {
     compare();
@@ -155,7 +155,7 @@ export default function Header() {
                 alt="logo"
                 style={{ width: "20%", }}
               /> */}
-              ChangeLogo
+              Tide Bank
             </Link>
           </div>
           <div

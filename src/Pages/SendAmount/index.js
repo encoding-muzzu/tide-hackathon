@@ -36,7 +36,6 @@ const SendAmount = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
-    setLoad(true);
     transactions();
     dispatch(getUserProfileAction({ callback: useProfileResponseData }));
   }, [dispatch]);
@@ -67,6 +66,7 @@ const SendAmount = () => {
   };
 
   const transactions = () => {
+    setLoad(true);
     dispatch(transactionsAction({ callback: respData }));
   };
 
@@ -75,6 +75,25 @@ const SendAmount = () => {
     setTransHistoryList(data?.data);
   };
   const columnsIncidents = [
+    {
+      name: "Type",
+      // selector: (row) => row["type"],
+      sortable: true,
+      wrap: true,
+      selector: (row) => (
+        // console.log(row['type'], '--->')
+        <span
+          className={`
+            ${row["type"] === "Debit" && "text-primary"}
+            ${row["type"] === "Credit" && "text-success"}
+            `}
+        >
+          {row["type"] === "Credit" && <td>Credit</td>}
+          {row["type"] === "Debit" && <td>Debit</td>}
+        </span>
+      )
+
+    },
     {
       name: "Create At",
       selector: (row) => row["created_at"],
@@ -90,9 +109,6 @@ const SendAmount = () => {
       name: "Amount",
       selector: (row) => row["amount"],
       sortable: true,
-      conditionalFormatting: (val) => {
-        return val ? { background: "blue" } : null;
-      },
     },
     {
       name: "Txn Hash",
@@ -106,12 +122,7 @@ const SendAmount = () => {
       sortable: true,
     },
 
-    {
-      name: "Type",
-      selector: (row) => row["type"],
-      sortable: true,
-      wrap: true,
-    },
+
   ];
 
   const handlePopupClose = () => {
@@ -121,11 +132,21 @@ const SendAmount = () => {
 
   const handleInputChange = (event) => {
     const { id, value } = event.target;
+
+    // if (id == "amount" && !userData.amount <= 0) {
+
+    //   setSendAmount((prevState) => ({
+    //     ...prevState,
+    //     [id]: value,
+    //   }));
+    // } else {
     setSendAmount((prevState) => ({
       ...prevState,
       [id]: value,
     }));
-  };
+
+    // }
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -236,6 +257,8 @@ const SendAmount = () => {
                   columns={columnsIncidents}
                   data={transHistoryList}
                   pagination
+                  defaultSortFieldId={2}
+                  defaultSortAsc={false}
                 />
               </Col>
             </Row>
@@ -243,31 +266,31 @@ const SendAmount = () => {
         ) : (
           <div className="d-flex justify-content-center align-items-center mt-5">
             <div className="mt-5">
-            <p className="text-primary fs-5 mb-2" >
-              <span className="fa fa-exclamation-circle me-2"></span>KYC not verified
-            </p>
-            <p className="fs-6 text-center cursor-pointer" role="button" onClick={handlePopupCloseKYC}>Please verify KYC</p>
+              <p className="text-primary fs-5 mb-2" >
+                <span className="fa fa-exclamation-circle me-2"></span>KYC not verified
+              </p>
+              <p className="fs-6 text-center cursor-pointer" role="button" onClick={handlePopupCloseKYC}>Please verify KYC</p>
             </div>
             {
-            // true &&
-            togglePopupKYC &&
-            <Wrapper>
-              <Popup
-                heading="KYC Form"
-                close={handlePopupCloseKYC}
-                className="px860"
-                body={
-                  <KycFields
-                    handleInputChange={handleInputChangeKYC}
-                    kycData={kycData}
-                    handleSubmit={handleSubmitKYC}
-                  />
-                }
-              />
-            </Wrapper>
-          }
+              // true &&
+              togglePopupKYC &&
+              <Wrapper>
+                <Popup
+                  heading="KYC Form"
+                  close={handlePopupCloseKYC}
+                  className="px860"
+                  body={
+                    <KycFields
+                      handleInputChange={handleInputChangeKYC}
+                      kycData={kycData}
+                      handleSubmit={handleSubmitKYC}
+                    />
+                  }
+                />
+              </Wrapper>
+            }
           </div>
-           
+
         )}
       </div>
     </>
