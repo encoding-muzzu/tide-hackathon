@@ -71,7 +71,7 @@ const KycFields
                         <Form.Label>Address </Form.Label>{" "}
                         <Form.Control
                             className="form-control"
-                            placeholder="Enter your care of"
+                            placeholder="Enter your Address"
                             id="address"
                             type="text"
                             value={kycData?.address}
@@ -96,7 +96,7 @@ const KycFields
                         <Form.Label>Pan Number</Form.Label>{" "}
                         <Form.Control
                             className="form-control"
-                            placeholder="Enter Aadhaar"
+                            placeholder="Enter Pan Number"
                             id="pan"
                             type="text"
                             value={kycData?.pan}
